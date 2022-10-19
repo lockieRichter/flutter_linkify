@@ -1,6 +1,5 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 import 'package:linkify/linkify.dart';
 
 export 'package:linkify/linkify.dart'
@@ -22,6 +21,9 @@ typedef LinkCallback = void Function(LinkableElement link);
 class Linkify extends StatelessWidget {
   /// Text to be linkified
   final String text;
+
+  /// List of replacement texts for URL links
+  final List<String> urlReplacementTexts;
 
   /// Linkifiers to be used for linkify
   final List<Linkifier> linkifiers;
@@ -76,6 +78,7 @@ class Linkify extends StatelessWidget {
   const Linkify({
     Key? key,
     required this.text,
+    this.urlReplacementTexts = const [],
     this.linkifiers = defaultLinkifiers,
     this.onOpen,
     this.options = const LinkifyOptions(),
@@ -102,6 +105,16 @@ class Linkify extends StatelessWidget {
       options: options,
       linkifiers: linkifiers,
     );
+
+    for (var i = 0; i < elements.length; i++) {
+      final element = elements[i];
+      if (urlReplacementTexts.isNotEmpty && element is UrlElement) {
+        elements[i] = UrlElement(
+          element.url,
+          urlReplacementTexts.removeAt(0),
+        );
+      }
+    }
 
     return Text.rich(
       buildTextSpan(
@@ -137,6 +150,9 @@ class Linkify extends StatelessWidget {
 class SelectableLinkify extends StatelessWidget {
   /// Text to be linkified
   final String text;
+
+  /// List of replacement texts for URL links
+  final List<String> urlReplacementTexts;
 
   /// The number of font pixels for each logical pixel
   final textScaleFactor;
@@ -228,6 +244,7 @@ class SelectableLinkify extends StatelessWidget {
   const SelectableLinkify({
     Key? key,
     required this.text,
+    this.urlReplacementTexts = const [],
     this.linkifiers = defaultLinkifiers,
     this.onOpen,
     this.options = const LinkifyOptions(),
@@ -267,6 +284,16 @@ class SelectableLinkify extends StatelessWidget {
       options: options,
       linkifiers: linkifiers,
     );
+
+    for (var i = 0; i < elements.length; i++) {
+      var element = elements[i];
+      if (urlReplacementTexts.isNotEmpty && element is UrlElement) {
+        elements[i] = UrlElement(
+          element.url,
+          urlReplacementTexts.removeAt(0),
+        );
+      }
+    }
 
     return SelectableText.rich(
       buildTextSpan(
@@ -341,14 +368,18 @@ TextSpan buildTextSpan(
               inlineSpan: TextSpan(
                 text: element.text,
                 style: linkStyle,
-                recognizer: onOpen != null ? (TapGestureRecognizer()..onTap = () => onOpen(element)) : null,
+                recognizer: onOpen != null
+                    ? (TapGestureRecognizer()..onTap = () => onOpen(element))
+                    : null,
               ),
             );
           } else {
             return TextSpan(
               text: element.text,
               style: linkStyle,
-              recognizer: onOpen != null ? (TapGestureRecognizer()..onTap = () => onOpen(element)) : null,
+              recognizer: onOpen != null
+                  ? (TapGestureRecognizer()..onTap = () => onOpen(element))
+                  : null,
             );
           }
         } else {

@@ -82,6 +82,10 @@ You can check if it is a `UrlElement` or `EmailElement` using `is` for custom ha
 
 You can enable parsing of only some link types using the `linkifiers` option. URL and email are enabled by default.
 
+You can also specify a list of replacement strings to be used for URL links.
+
+These strings will be used in sequential order to act as hyperlinked texts linking to the URL.
+
 Full example can be found at [`example/lib/main.dart`](example/lib/main.dart).
 
 ![Example Screenshot](https://github.com/Cretezy/flutter_linkify/raw/master/example/screenshot.png)
